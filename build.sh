@@ -86,11 +86,10 @@ then
 	PACKAGE=$PACKAGE-playerbot
 fi
 
-cd azerothcore-wotlk
-podman build --target db-import --tag gchr.io/zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target worldserver --tag gchr.io/zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target authserver --tag gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target client-data --tag gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target tools --tag gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target dev --tag gchr.io/zjwillims/$PACKAGE/dev:$VERSION azerothcore-wotlk azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target db-import --tag gchr.io/zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target worldserver --tag gchr.io/zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target authserver --tag gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target client-data --tag gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target tools --tag gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target dev --tag gchr.io/zjwillims/$PACKAGE/dev:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 
