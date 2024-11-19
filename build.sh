@@ -82,6 +82,7 @@ mv Dockerfile azerothcore-wotlk/apps/docker/Dockerfile
 # For lower chance of conflict when running as a rootless podman container, an id that is reasonably available is used.
 export DOCKER_USER_ID=1315185
 export DOCKER_GROUP_ID=1315185
+export DOCKER_USER=acore
 
 VERSION=$(git show -s --format=%ci | cut -d ' ' -f 1 | tr - .)
 PACKAGE=acore
