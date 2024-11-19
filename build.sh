@@ -4,8 +4,8 @@
 set -o errexit -o pipefail -o noclobber -o nounset
 
 # option --output/-o requires 1 argument
-LONGOPTS=playerbots,verbose
-OPTIONS=pv
+LONGOPTS=playerbots,publish,verbose
+OPTIONS=pPv
 
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
@@ -15,7 +15,7 @@ PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@") 
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-p=n v=n
+p=n v=n P=n
 # now enjoy the options in order and nicely split until we see --
 while true; do
     case "$1" in
@@ -23,6 +23,10 @@ while true; do
             p=y
             shift
             ;;
+	-P|--publish)
+	    P=y
+	    shift
+	    ;;
         -v|--verbose)
             v=y
             shift
@@ -38,7 +42,7 @@ while true; do
     esac
 done
 
-echo "verbose: $v, playerbots: $p"
+echo "verbose: $v, playerbots: $p, publish: $P"
 
 DEFAULT_URL="https://github.com/azerothcore/azerothcore-wotlk.git"
 PLAYERBOT_URL="https://github.com/liyunfan1223/azerothcore-wotlk.git"
@@ -81,7 +85,7 @@ export DOCKER_GROUP_ID=1315185
 
 VERSION=$(git show -s --format=%ci | cut -d ' ' -f 1 | tr - .)
 PACKAGE=acore
-if [[ "$p" == "n" ]]
+if [[ "$p" == "y" ]]
 then
 	PACKAGE=$PACKAGE-playerbot
 fi
@@ -93,3 +97,12 @@ podman build --target client-data --tag gchr.io/zjwillims/$PACKAGE/client-data:$
 podman build --target tools --tag gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 podman build --target dev --tag gchr.io/zjwillims/$PACKAGE/dev:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 
+if [[ "$P" == "y" ]]
+then
+	podman push gchr.io/zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk
+	podman push gchr.io/zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk
+	podman push gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk
+	podman push gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk
+	podman push gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk
+	podman push gchr.io/zjwillims/$PACKAGE/dev:$VERSION azerothcore-wotlk
+fi
