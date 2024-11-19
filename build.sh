@@ -76,12 +76,15 @@ else
 fi
 
 # Patch the Dockerfile to work with podman (Unsure why it works with docker, by appearances it shouldn't)
-cat azerothcore-wotlk/apps/docker/Dockerfile | sed 's/FROM skeleton AS client-data/FROM runtime AS client-data\n\nUSER 0/g' > Dockerfile
+cat azerothcore-wotlk/apps/docker/Dockerfile | 
+	sed 's/FROM skeleton AS client-data/FROM runtime AS client-data\n\nUSER 0/g' | \
+	sed 's/$DOCKER_USER:$DOCKER_USER/$USER_ID:$GROUP_ID/g' \
+	> Dockerfile
 mv Dockerfile azerothcore-wotlk/apps/docker/Dockerfile
 
 # For lower chance of conflict when running as a rootless podman container, an id that is reasonably available is used.
-export DOCKER_USER_ID=1315185
-export DOCKER_GROUP_ID=1315185
+export USER_ID=1315185
+export GROUP_ID=1315185
 export DOCKER_USER=acore
 
 VERSION=$(git show -s --format=%ci | cut -d ' ' -f 1 | tr - .)
