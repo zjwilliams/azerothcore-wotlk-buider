@@ -84,7 +84,7 @@ fi
 cat azerothcore-wotlk/apps/docker/Dockerfile | \
         sed 's/ # lts//g' | \
 	sed 's/--mount=type=cache,target=\/ccache,sharing=locked//g' | \
-	sed 's/--mount=type=bind,target=\/azerothcore/.git,source=.git//g' | \
+	sed 's/--mount=type=bind,target=\/azerothcore\/.git,source=.git//g' | \
 	sed 's/FROM skeleton AS client-data/FROM runtime AS client-data\n\nUSER 0/g' | \
 	sed 's/$DOCKER_USER:$DOCKER_USER/$USER_ID:$GROUP_ID/g' | \
 	sed 's/USER $DOCKER_USER//g' | \
