@@ -105,17 +105,17 @@ then
 	PACKAGE=$PACKAGE-playerbot
 fi
 
-podman build --target db-import --tag gchr.io/zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target worldserver --tag gchr.io/zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target authserver --tag gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target client-data --tag gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target tools --tag gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target db-import --tag zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target worldserver --tag zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target authserver --tag zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target client-data --tag zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
+podman build --target tools --tag zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 
 if [[ "$P" == "y" ]]
 then
-	podman push gchr.io/zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk
-	podman push gchr.io/zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk
-	podman push gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk
-	podman push gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk
-	podman push gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk
+	podman push zjwillims/$PACKAGE/db-import:$VERSION azerothcore-wotlk
+	podman push zjwillims/$PACKAGE/worldserver:$VERSION azerothcore-wotlk
+	podman push zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk
+	podman push zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk
+	podman push zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk
 fi
