@@ -105,19 +105,19 @@ then
 	PACKAGE=$PACKAGE-playerbot
 fi
 
-podman build --target db-import \
+podman build --target db-import --squash-all \
 	--tag docker.io/zjwilliams/$PACKAGE-db-import:$VERSION azerothcore-wotlk \
 	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target worldserver \
+podman build --target worldserver --squash-all \
 	--tag docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION azerothcore-wotlk \
 	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target authserver \
+podman build --target authserver --squash-all \
 	--tag docker.io/zjwilliams/$PACKAGE-authserver:$VERSION azerothcore-wotlk \
 	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target client-data \
+podman build --target client-data --squash-all \
 	--tag docker.io/zjwilliams/$PACKAGE-client-data:$VERSION azerothcore-wotlk \
 	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target tools \
+podman build --target tools --squash-all \
 	--tag docker.io/zjwilliams/$PACKAGE-tools:$VERSION azerothcore-wotlk \
 	--file azerothcore-wotlk/apps/docker/Dockerfile
 
