@@ -81,7 +81,7 @@ then
 fi
 
 # Patch the Dockerfile to work with podman (Unsure why it works with docker, by appearances it shouldn't)
-cat azerothcore-wotlk/apps/docker/Dockerfile |
+cat azerothcore-wotlk/apps/docker/Dockerfile | \
         sed 's/# lts//g' | \	
 	sed 's/FROM skeleton AS client-data/FROM runtime AS client-data\n\nUSER 0/g' | \
 	sed 's/$DOCKER_USER:$DOCKER_USER/$USER_ID:$GROUP_ID/g' | \
