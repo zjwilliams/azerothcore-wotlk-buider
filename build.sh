@@ -4,8 +4,8 @@
 set -o errexit -o pipefail -o noclobber -o nounset
 
 # option --output/-o requires 1 argument
-LONGOPTS=playerbots,publish,verbose
-OPTIONS=pPv
+LONGOPTS=playerbots,publish,verbose,target:
+OPTIONS=pPvt:
 
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
@@ -15,7 +15,7 @@ PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@") 
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-p=n v=n P=n
+p=n v=n P=n target=-
 # now enjoy the options in order and nicely split until we see --
 while true; do
     case "$1" in
@@ -31,6 +31,10 @@ while true; do
             v=y
             shift
             ;;
+	-t|--target)
+ 	    target="$2"
+	    shift 2
+	    ;;
         --)
             shift
             break
@@ -42,7 +46,7 @@ while true; do
     esac
 done
 
-echo "verbose: $v, playerbots: $p, publish: $P"
+echo "verbose: $v, playerbots: $p, publish: $P, target: $target"
 
 DEFAULT_URL="https://github.com/azerothcore/azerothcore-wotlk.git"
 PLAYERBOT_URL="https://github.com/liyunfan1223/azerothcore-wotlk.git"
@@ -105,27 +109,78 @@ then
 	PACKAGE=$PACKAGE-playerbot
 fi
 
-podman build --target db-import --squash-all \
-	--tag docker.io/zjwilliams/$PACKAGE-db-import:$VERSION azerothcore-wotlk \
-	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target worldserver --squash-all \
-	--tag docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION azerothcore-wotlk \
-	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target authserver --squash-all \
-	--tag docker.io/zjwilliams/$PACKAGE-authserver:$VERSION azerothcore-wotlk \
-	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target client-data --squash-all \
-	--tag docker.io/zjwilliams/$PACKAGE-client-data:$VERSION azerothcore-wotlk \
-	--file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target tools --squash-all \
-	--tag docker.io/zjwilliams/$PACKAGE-tools:$VERSION azerothcore-wotlk \
-	--file azerothcore-wotlk/apps/docker/Dockerfile
+
+if [[ "$target" == "-" ]]
+then
+	podman build --target db-import --squash-all \
+		--tag docker.io/zjwilliams/$PACKAGE-db-import:$VERSION azerothcore-wotlk \
+		--file azerothcore-wotlk/apps/docker/Dockerfile
+	podman build --target worldserver --squash-all \
+		--tag docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION azerothcore-wotlk \
+		--file azerothcore-wotlk/apps/docker/Dockerfile
+	podman build --target authserver --squash-all \
+		--tag docker.io/zjwilliams/$PACKAGE-authserver:$VERSION azerothcore-wotlk \
+		--file azerothcore-wotlk/apps/docker/Dockerfile
+	podman build --target client-data --squash-all \
+		--tag docker.io/zjwilliams/$PACKAGE-client-data:$VERSION azerothcore-wotlk \
+		--file azerothcore-wotlk/apps/docker/Dockerfile
+	podman build --target tools --squash-all \
+		--tag docker.io/zjwilliams/$PACKAGE-tools:$VERSION azerothcore-wotlk \
+		--file azerothcore-wotlk/apps/docker/Dockerfile
+elif [[ "$target" == "db-import" ]]
+then
+	podman build --target db-import --squash-all \
+                --tag docker.io/zjwilliams/$PACKAGE-db-import:$VERSION azerothcore-wotlk \
+                --file azerothcore-wotlk/apps/docker/Dockerfile
+elif [[ "$target" == "worldserver" ]]
+then
+	podman build --target db-worldserver --squash-all \
+                --tag docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION azerothcore-wotlk \
+                --file azerothcore-wotlk/apps/docker/Dockerfile
+elif [[ "$target" == "authserver" ]]
+then
+	podman build --target authserver --squash-all \
+                --tag docker.io/zjwilliams/$PACKAGE-authserver:$VERSION azerothcore-wotlk \
+                --file azerothcore-wotlk/apps/docker/Dockerfile
+elif [[ "$target" == "client-data" ]]
+then
+	podman build --target client-data --squash-all \
+                --tag docker.io/zjwilliams/$PACKAGE-client-data:$VERSION azerothcore-wotlk \
+                --file azerothcore-wotlk/apps/docker/Dockerfile
+elif [[ "$target" == "tools" ]]
+then
+	podman build --target tools --squash-all \
+                --tag docker.io/zjwilliams/$PACKAGE-tools:$VERSION azerothcore-wotlk \
+                --file azerothcore-wotlk/apps/docker/Dockerfile
+else
+	echo "Invalid target. Valid options are: db-import, worldserver, authserver, client-data, tools"
+fi
 
 if [[ "$P" == "y" ]]
 then
-	podman push docker.io/zjwilliams/$PACKAGE-db-import:$VERSION azerothcore-wotlk
-	podman push docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION azerothcore-wotlk
-	podman push docker.io/zjwilliams/$PACKAGE-authserver:$VERSION azerothcore-wotlk
-	podman push docker.io/zjwilliams/$PACKAGE-client-data:$VERSION azerothcore-wotlk
-	podman push docker.io/zjwilliams/$PACKAGE-tools:$VERSION azerothcore-wotlk
+	if [[ "$target" == "-" ]]
+	then
+		podman push docker.io/zjwilliams/$PACKAGE-db-import:$VERSION
+		podman push docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION
+		podman push docker.io/zjwilliams/$PACKAGE-authserver:$VERSION
+		podman push docker.io/zjwilliams/$PACKAGE-client-data:$VERSION
+		podman push docker.io/zjwilliams/$PACKAGE-tools:$VERSION
+	elif [[ "$target" == "db-import" ]]
+	then
+	        podman push docker.io/zjwilliams/$PACKAGE-db-import:$VERSION
+	elif [[ "$target" == "worldserver" ]]
+	then
+                podman push docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION
+	elif [[ "$target" == "authserver" ]]
+	then
+                podman push docker.io/zjwilliams/$PACKAGE-authserver:$VERSION
+	elif [[ "$target" == "client-data" ]]
+	then
+                podman push docker.io/zjwilliams/$PACKAGE-client-data:$VERSION
+	elif [[ "$target" == "tools" ]]
+	then
+                podman push docker.io/zjwilliams/$PACKAGE-tools:$VERSION
+	else
+	        echo "Invalid target. Valid options are: db-import, worldserver, authserver, client-data, tools"
+	fi
 fi

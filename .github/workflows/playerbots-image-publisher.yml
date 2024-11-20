@@ -9,7 +9,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  publish-playerbots:
+  publish-db-import:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,4 +25,76 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     - uses: actions/checkout@v4
     - name: (Playerbots) Build and publish
-      run: ./build.sh -p -v --publish
+      run: ./build.sh -p -v --publish --target db-import
+
+  publish-worldserver:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - uses: actions/checkout@v4
+    - name: (Playerbots) Build and publish
+      run: ./build.sh -p -v --publish --target worldserver
+
+  publish-authserver:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - uses: actions/checkout@v4
+    - name: (Playerbots) Build and publish
+      run: ./build.sh -p -v --publish --target authserver
+
+  publish-client-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - uses: actions/checkout@v4
+    - name: (Playerbots) Build and publish
+      run: ./build.sh -p -v --publish --target client-data
+
+  publish-tools:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    - uses: actions/checkout@v4
+    - name: (Playerbots) Build and publish
+      run: ./build.sh -p -v --publish --target tools
