@@ -134,7 +134,7 @@ then
                 --file azerothcore-wotlk/apps/docker/Dockerfile
 elif [[ "$target" == "worldserver" ]]
 then
-	podman build --target db-worldserver --squash-all \
+	podman build --target worldserver --squash-all \
                 --tag docker.io/zjwilliams/$PACKAGE-worldserver:$VERSION azerothcore-wotlk \
                 --file azerothcore-wotlk/apps/docker/Dockerfile
 elif [[ "$target" == "authserver" ]]
