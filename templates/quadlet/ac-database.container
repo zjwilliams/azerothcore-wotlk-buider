@@ -1,0 +1,19 @@
+[Unit]
+Description="Azeroth Core WOTLK Database"
+
+[Service]
+Restart=always
+
+[Container]
+Pod=azeroth-core.pod
+ContainerName=ac-database
+Image=docker.io/library/mysql:8.3
+Environment=MYSQL_ROOT_PASSWORD=${DOCKER_DB_ROOT_PASSWORD}
+Volume=ac-database:/var/lib/mysql
+#HealthCmd=/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\"
+#HealthInterval=5s
+#HealthTimeout=10s
+#HealthRetries=40
+
+[Install]
+WantedBy=multi-user.target default.target

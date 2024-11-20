@@ -1,0 +1,24 @@
+[Unit]
+Description="Azeroth Core World Server"
+After=ac-database.service ac-db-import.service ac-client-data-init.service
+Requires=ac-database.service ac-db-import.service ac-client-data-init.service
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Container]
+Pod=azeroth-core.pod
+ContainerName=ac-worldserver
+Image=docker.io/zjwilliams/${IMAGE_FLAVOR}-worldserver:${DOCKER_IMAGE_TAG}
+UserNS=keep-id:uid=50000,gid=50000
+PodmanArgs=-it
+Environment=AC_DATA_DIR="/azerothcore/env/dist/data"
+Environment=AC_LOGS_DIR="/azerothcore/env/dist/logs"
+Environment=AC_LOGIN_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_auth"
+Environment=AC_WORLD_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_world"
+Environment=AC_CHARACTER_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_characters"
+Environment=AC_PLAYERBOTS_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_playerbots"
+
+[Install]
+WantedBy=multi-user.target default.target

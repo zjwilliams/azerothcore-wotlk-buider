@@ -1,0 +1,21 @@
+[Unit]
+Description="Azeroth Core AuthServer"
+After=ac-databse.service ac-db-import.service
+Requires=ac-database.service ac-db-import.service
+
+[Service]
+Restart=always
+RestartSec=10
+
+[Container]
+Pod=azeroth-core.pod
+ContainerName=ac-authserver
+Image=docker.io/zjwilliams/${IMAGE_FLAVOR}-authserver:${DOCKER_IMAGE_TAG}
+UserNS=keep-id:uid=50000,gid=50000
+PodmanArgs=-t
+Environment=AC_LOGS_DIR="/azerothcore/env/dist/logs"
+Environment=AC_TMP_DIR="/azerothcore/env/dist/tmp"
+Environment=AC_LOGIN_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_auth"
+
+[Install]
+WantedBy=multi-user.target default.target

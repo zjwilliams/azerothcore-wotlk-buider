@@ -1,0 +1,23 @@
+[Unit]
+Description="Azeroth Core Database Import"
+After=ac-database.service
+Requires=ac-database.service
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RestartSec=10
+
+[Container]
+Pod=azeroth-core.pod
+ContainerName=ac-db-import
+Image=docker.io/zjwilliams/${IMAGE_FLAVOR}-db-import:${DOCKER_IMAGE_TAG}
+UserNS=keep-id:uid=50000,gid=50000
+Environment=AC_DATA_DIR=/azerothcore/env/dist/data
+Environment=AC_LOGS_DIR=/azerothcore/env/dist/logs
+Environment=AC_LOGIN_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_auth"
+Environment=AC_WORLD_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_world"
+Environment=AC_CHARACTER_DATABASE_INFO="ac-database;3306;root;${DOCKER_DB_ROOT_PASSWORD};acore_characters"
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -1,0 +1,14 @@
+[Unit]
+Description="Azeroth Core Client Data Init"
+
+[Service]
+Type=oneshot
+
+[Container]
+Pod=azeroth-core.pod
+ContainerName=ac-client-data-init
+Image=docker.io/zjwilliams/${IMAGE_FLAVOR}-client-data:${DOCKER_IMAGE_TAG}
+UserNS=keep-id:uid=50000,gid=50000
+
+[Install]
+WantedBy=multi-user.target default.target

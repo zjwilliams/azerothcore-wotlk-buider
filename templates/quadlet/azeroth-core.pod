@@ -1,0 +1,16 @@
+[Unit]
+Description="Azeroth Core"
+
+[Pod]
+PodName=azeroth-core
+# Database
+PublishPort=3306:3306
+# Auth Server
+PublishPort=3724:3724
+# World Server
+PublishPort=8085:8085
+# Soap
+PublishPort=7878:7878
+Volume=ac-etc:/azerothcore/env/dist/etc:z
+Volume=ac-logs:/azerothcore/env/dist/logs:z
+Volume=ac-client-data:/azerothcore/env/dist/data:z
