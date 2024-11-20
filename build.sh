@@ -78,14 +78,17 @@ fi
 # Patch the Dockerfile to work with podman (Unsure why it works with docker, by appearances it shouldn't)
 cat azerothcore-wotlk/apps/docker/Dockerfile | 
 	sed 's/FROM skeleton AS client-data/FROM runtime AS client-data\n\nUSER 0/g' | \
-	sed 's/$DOCKER_USER:$DOCKER_USER/$USER_ID:$GROUP_ID/g' \
+	sed 's/$DOCKER_USER:$DOCKER_USER/$USER_ID:$GROUP_ID/g' | \
+	sed 's/USER $DOCKER_USER//g' | \
+	sed 's/CMD/USER $DOCKER_USER\nCMD/g' | \
+	sed 's/ARG DOCKER_USER=acore//g' | \
+	sed 's/$DOCKER_USER/acore/g' | \
+	sed 's/ARG USER_ID=1000//g' | \
+	sed 's/$USER_ID/50000/g' | \
+	sed 's/ARG GROUP_ID=1000//g' | \
+	sed 's/$GROUP_ID/50000/g' \
 	> Dockerfile
 mv Dockerfile azerothcore-wotlk/apps/docker/Dockerfile
-
-# For lower chance of conflict when running as a rootless podman container, an id that is reasonably available is used.
-export USER_ID=1315185
-export GROUP_ID=1315185
-export DOCKER_USER=acore
 
 VERSION=$(git show -s --format=%ci | cut -d ' ' -f 1 | tr - .)
 PACKAGE=acore
@@ -99,7 +102,6 @@ podman build --target worldserver --tag gchr.io/zjwillims/$PACKAGE/worldserver:$
 podman build --target authserver --tag gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 podman build --target client-data --tag gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 podman build --target tools --tag gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
-podman build --target dev --tag gchr.io/zjwillims/$PACKAGE/dev:$VERSION azerothcore-wotlk --file azerothcore-wotlk/apps/docker/Dockerfile
 
 if [[ "$P" == "y" ]]
 then
@@ -108,5 +110,4 @@ then
 	podman push gchr.io/zjwillims/$PACKAGE/authserver:$VERSION azerothcore-wotlk
 	podman push gchr.io/zjwillims/$PACKAGE/client-data:$VERSION azerothcore-wotlk
 	podman push gchr.io/zjwillims/$PACKAGE/tools:$VERSION azerothcore-wotlk
-	podman push gchr.io/zjwillims/$PACKAGE/dev:$VERSION azerothcore-wotlk
 fi
