@@ -75,6 +75,11 @@ else
 	cd ../../
 fi
 
+if [[ "$v" == "y" ]]
+then
+	echo "Patching Dockerfile."
+fi
+
 # Patch the Dockerfile to work with podman (Unsure why it works with docker, by appearances it shouldn't)
 cat azerothcore-wotlk/apps/docker/Dockerfile | 
 	sed 's/FROM skeleton AS client-data/FROM runtime AS client-data\n\nUSER 0/g' | \
