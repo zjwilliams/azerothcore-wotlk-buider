@@ -8,5 +8,7 @@
 
 ### Deploying To A System
 
-```generate.sh``` converts the templates to usable files. Specify the image flavor (default/playerbots) and version.
+```generate.sh``` converts the templates to usable files. Specify the image flavor (default/playerbots/ah-bots) and version.
+
+If if ```-a/--ah-bots``` flag is used, then the ```mod-ah-bot/data/sql/db-world/mod_auctionhousebot.sql``` will need to be applied to the database after initialization. If this is not applied the ```ac-worldserver``` container will crash.
 
