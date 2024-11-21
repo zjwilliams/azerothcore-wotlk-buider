@@ -4,8 +4,8 @@
 set -o errexit -o pipefail -o noclobber -o nounset
 
 # option --output/-o requires 1 argument
-LONGOPTS=playerbots,publish,verbose,target:
-OPTIONS=pPvt:
+LONGOPTS=ah-bots,playerbots,publish,verbose,target:
+OPTIONS=apPvt:
 
 # -temporarily store output to be able to check for errors
 # -activate quoting/enhanced mode (e.g. by writing out “--options”)
@@ -15,7 +15,7 @@ PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@") 
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-p=n v=n P=n target=-
+a=n p=n v=n P=n target=-
 # now enjoy the options in order and nicely split until we see --
 while true; do
     case "$1" in
@@ -23,18 +23,22 @@ while true; do
             p=y
             shift
             ;;
-	-P|--publish)
-	    P=y
-	    shift
-	    ;;
+		-a|--ah-bots)
+            a=y
+            shift
+            ;;
+		-P|--publish)
+			P=y
+			shift
+			;;
         -v|--verbose)
             v=y
             shift
             ;;
-	-t|--target)
- 	    target="$2"
-	    shift 2
-	    ;;
+		-t|--target)
+			target="$2"
+			shift 2
+			;;
         --)
             shift
             break
@@ -46,7 +50,7 @@ while true; do
     esac
 done
 
-echo "verbose: $v, playerbots: $p, publish: $P, target: $target"
+echo "verbose: $v, playerbots: $p, ah-bots: $a, publish: $P, target: $target"
 
 DEFAULT_URL="https://github.com/azerothcore/azerothcore-wotlk.git"
 PLAYERBOT_URL="https://github.com/liyunfan1223/azerothcore-wotlk.git"
@@ -69,13 +73,24 @@ then
 	fi
 	git clone $DEFAULT_URL --branch master
 else
-	        if [[ "$v" == "y"  ]]
-        then
-                echo "Playerbots enabled, cloning Playerbot from: $PLAYERBOT_URL:"
-        fi
-        git clone $PLAYERBOT_URL --branch Playerbot
+	if [[ "$v" == "y"  ]]
+	then
+		echo "Playerbots enabled, cloning Playerbot from: $PLAYERBOT_URL:"
+	fi
+	git clone $PLAYERBOT_URL --branch Playerbot
 	cd azerothcore-wotlk/modules
 	git clone https://github.com/liyunfan1223/mod-playerbots.git --branch=master
+	cd ../../
+fi
+
+if [[ "$a" == "y" ]]
+then
+	if [[ "$v" == "y"  ]]
+	then
+		echo "ah-bots enabled, cloning master from: https://github.com/azerothcore/mod-ah-bot.git"
+	fi
+	cd azerothcore-wotlk/modules
+	git clone https://github.com/azerothcore/mod-ah-bot.git --branch=master
 	cd ../../
 fi
 
@@ -109,7 +124,10 @@ if [[ "$p" == "y" ]]
 then
 	PACKAGE=$PACKAGE-playerbot
 fi
-
+if [[ "$a" == "y" ]]
+then
+	PACKAGE=$PACKAGE-ah
+fi
 
 if [[ "$target" == "-" ]]
 then
